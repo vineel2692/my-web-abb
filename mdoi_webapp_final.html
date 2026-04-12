@@ -1,0 +1,435 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.app{font-size:14px;color:var(--color-text-primary);min-height:600px;display:flex;flex-direction:column}
+.topbar{background:#0078d4;padding:0 20px;height:48px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.topbar-logo{width:20px;height:20px;background:#fff;border-radius:3px;display:flex;align-items:center;justify-content:center}
+.topbar-logo svg{width:14px;height:14px}
+.topbar-title{color:#fff;font-size:14px;font-weight:500}
+.topbar-badge{background:rgba(255,255,255,0.2);color:#fff;font-size:11px;padding:2px 8px;border-radius:10px;margin-left:4px}
+.topbar-user{margin-left:auto;display:flex;align-items:center;gap:8px}
+.topbar-avatar{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:500}
+.body{display:flex;flex:1}
+.sidebar{width:200px;min-width:200px;background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary);padding:12px 0;display:flex;flex-direction:column;gap:2px}
+.sidebar-section{font-size:10px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.6px;padding:8px 16px 4px}
+.sitem{display:flex;align-items:center;gap:10px;padding:8px 16px;font-size:13px;color:var(--color-text-secondary);cursor:pointer;border-left:2px solid transparent;transition:background .15s}
+.sitem:hover{background:var(--color-background-primary)}
+.sitem.active{background:var(--color-background-primary);color:#0078d4;border-left-color:#0078d4;font-weight:500}
+.sitem.done{color:var(--color-text-success)}
+.sitem .dot{width:18px;height:18px;border-radius:50%;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0;color:var(--color-text-secondary)}
+.sitem.active .dot{background:#0078d4;border-color:#0078d4;color:#fff}
+.sitem.done .dot{background:var(--color-background-success);border-color:var(--color-border-success);color:var(--color-text-success)}
+.prog-wrap{padding:10px 16px 0;margin-top:auto}
+.prog-label{font-size:11px;color:var(--color-text-tertiary);margin-bottom:4px}
+.prog-bar{height:3px;background:var(--color-border-tertiary);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:#0078d4;border-radius:2px;transition:width .4s}
+.main{flex:1;overflow:auto;padding:24px}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:24px;margin-bottom:16px}
+.card-head{margin-bottom:20px}
+.sec-badge{display:inline-block;background:var(--color-background-info);color:var(--color-text-info);font-size:11px;font-weight:500;padding:2px 8px;border-radius:var(--border-radius-md);margin-bottom:8px}
+.card-head h2{font-size:16px;font-weight:500;margin-bottom:4px}
+.card-head p{font-size:13px;color:var(--color-text-secondary)}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.span2{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.field label .req{color:var(--color-text-danger)}
+.finput{border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:7px 10px;font-size:13px;background:var(--color-background-primary);color:var(--color-text-primary);width:100%;font-family:var(--font-sans);transition:border-color .15s}
+.finput:focus{outline:none;border-color:#0078d4;box-shadow:0 0 0 2px rgba(0,120,212,0.12)}
+textarea.finput{resize:vertical;min-height:68px;line-height:1.5}
+.radio-group{display:flex;gap:14px;align-items:center;padding:2px 0}
+.radio-group label{display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer}
+.radio-group input{accent-color:#0078d4}
+.check-grid{display:flex;flex-wrap:wrap;gap:6px}
+.check-grid label{display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:5px 10px;transition:all .15s}
+.check-grid label:hover{border-color:#0078d4;background:var(--color-background-info)}
+.check-grid input{accent-color:#0078d4}
+.subsec{border-top:0.5px solid var(--color-border-tertiary);margin-top:18px;padding-top:18px}
+.subsec-title{font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.dt{width:100%;border-collapse:collapse;font-size:12px}
+.dt th{background:var(--color-background-secondary);padding:8px 10px;text-align:left;border:0.5px solid var(--color-border-tertiary);font-weight:500;font-size:11px;color:var(--color-text-secondary)}
+.dt td{border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+.dt td input{width:100%;padding:7px 10px;border:none;background:transparent;font-size:12px;color:var(--color-text-primary);font-family:var(--font-sans)}
+.dt td input:focus{outline:none;background:var(--color-background-info)}
+.dt td.rl{padding:7px 10px;background:var(--color-background-secondary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.form-nav{display:flex;align-items:center;gap:8px;padding-top:18px;border-top:0.5px solid var(--color-border-tertiary);margin-top:4px}
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:var(--border-radius-md);padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font-sans);transition:all .15s;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary)}
+.btn:hover{background:var(--color-background-secondary)}
+.btn.primary{background:#0078d4;border-color:#0078d4;color:#fff}
+.btn.primary:hover{background:#006abe}
+.btn.success{background:#107c10;border-color:#107c10;color:#fff}
+.btn.success:hover{background:#0b6b0b}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--color-text-secondary);font-size:12px;padding:6px 10px}
+.btn.ghost:hover{background:var(--color-background-secondary);border-color:var(--color-border-tertiary)}
+.info-banner{background:var(--color-background-info);border:0.5px solid var(--color-border-info);border-radius:var(--border-radius-md);padding:10px 14px;font-size:12px;color:var(--color-text-info);margin-bottom:16px;display:flex;gap:8px;align-items:flex-start}
+/* PDF preview panel */
+.pdf-wrap{display:grid;grid-template-columns:1fr 280px;gap:20px}
+.pdf-doc{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:28px;font-size:12px}
+.pdf-hdr{background:#0078d4;margin:-28px -28px 20px;padding:16px 28px;border-radius:var(--border-radius-lg) var(--border-radius-lg) 0 0;display:flex;justify-content:space-between;align-items:flex-start}
+.pdf-org{color:#fff;font-size:13px;font-weight:500}
+.pdf-sub{color:rgba(255,255,255,0.7);font-size:11px;margin-top:2px}
+.pdf-ts{text-align:right;color:rgba(255,255,255,0.8);font-size:11px}
+.pdf-title{font-size:15px;font-weight:500;margin-bottom:18px;padding-bottom:12px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.pdf-sec{margin-bottom:16px}
+.pdf-sec-hdr{background:var(--color-background-info);color:var(--color-text-info);font-size:11px;font-weight:500;padding:4px 10px;border-radius:var(--border-radius-md);margin-bottom:8px}
+.pdf-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.pdf-k{color:var(--color-text-secondary);font-size:11px}
+.pdf-v{font-size:11px;font-weight:500;text-align:right;max-width:55%}
+.pdf-footer{font-size:10px;color:var(--color-text-tertiary);text-align:center;margin-top:20px;padding-top:12px;border-top:0.5px solid var(--color-border-tertiary)}
+.actions-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:20px}
+.act-title{font-size:14px;font-weight:500;margin-bottom:6px}
+.act-sub{font-size:12px;color:var(--color-text-secondary);margin-bottom:18px;line-height:1.6}
+.dl-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:14px;margin-bottom:12px}
+.dl-box-title{font-size:12px;font-weight:500;margin-bottom:4px}
+.dl-box-sub{font-size:11px;color:var(--color-text-secondary);margin-bottom:10px}
+.appr-row{display:flex;align-items:center;gap:8px;padding:8px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);font-size:12px;margin-top:6px}
+.appr-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-pending{background:#ffd700}
+.dot-done{background:#107c10}
+</style>
+
+<div class="app">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <svg viewBox="0 0 20 20" fill="none"><rect x="1" y="1" width="8" height="8" fill="#f25022"/><rect x="11" y="1" width="8" height="8" fill="#7fba00"/><rect x="1" y="11" width="8" height="8" fill="#00a4ef"/><rect x="11" y="11" width="8" height="8" fill="#ffb900"/></svg>
+    </div>
+    <span class="topbar-title">MDOI Deployment Approvals</span>
+    <span class="topbar-badge">Power Apps</span>
+    <div class="topbar-user">
+      <span style="color:rgba(255,255,255,0.8);font-size:12px">Telefónica Germany</span>
+      <div class="topbar-avatar">AE</div>
+    </div>
+  </div>
+
+  <div class="body">
+    <!-- Sidebar: always visible -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-section">Form sections</div>
+      <div class="sitem active" id="sl0" onclick="goSec(0)"><span class="dot">1</span>Repository &amp; Tracking</div>
+      <div class="sitem" id="sl1" onclick="goSec(1)"><span class="dot">2</span>Testing &amp; Docs</div>
+      <div class="sitem" id="sl2" onclick="goSec(2)"><span class="dot">3</span>Ownership &amp; Roles</div>
+      <div class="sitem" id="sl3" onclick="goSec(3)"><span class="dot">4</span>BPMN Overview</div>
+      <div class="sitem" id="sl4" onclick="goSec(4)"><span class="dot">5</span>System Dependencies</div>
+      <div class="sitem" id="sl5" onclick="goSec(5)"><span class="dot">6</span>Deployment Gov.</div>
+      <div class="sitem" id="sl6" onclick="goSec(6)"><span class="dot">7</span>Declaration</div>
+      <div class="prog-wrap">
+        <div class="prog-label" id="prog-label">0 of 7 sections</div>
+        <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+    </aside>
+
+    <main class="main">
+
+      <!-- FORM PANEL (mp0) — shown directly on load -->
+      <div class="panel active" id="mp0">
+
+        <!-- Section 0: Repository & Tracking -->
+        <div id="sec0" class="panel active">
+          <div class="card">
+            <div class="card-head"><div class="sec-badge">Section 1 of 7</div><h2>Repository &amp; Tracking</h2><p>GitLab repository setup and Jira ticket linkage</p></div>
+            <div class="subsec-title">GitLab repository</div>
+            <div class="field-grid">
+              <div class="field"><label>Repository URL <span class="req">*</span></label><input class="finput" type="url" placeholder="https://gitlab.telefonica.de/mdoi/…" id="f_repo_url"></div>
+              <div class="field"><label>BPMN file name</label><input class="finput" type="text" placeholder="my-workflow.bpmn" id="f_bpmn_name"></div>
+              <div class="field"><label>Dedicated GitLab repo exists? <span class="req">*</span></label><div class="radio-group"><label><input type="radio" name="r_gitlab" value="Yes"> Yes</label><label><input type="radio" name="r_gitlab" value="No"> No</label></div></div>
+              <div class="field"><label>Version tagging applied? <span class="req">*</span></label><div class="radio-group"><label><input type="radio" name="r_ver" value="Yes"> Yes</label><label><input type="radio" name="r_ver" value="No"> No</label></div></div>
+              <div class="field"><label>Standard BPMN naming used?</label><div class="radio-group"><label><input type="radio" name="r_stdname" value="Yes"> Yes</label><label><input type="radio" name="r_stdname" value="No"> No</label></div></div>
+              <div class="field"><label>Feat Branch merged to Dev?</label><div class="radio-group"><label><input type="radio" name="r_branch" value="Yes"> Yes</label><label><input type="radio" name="r_branch" value="No"> No</label></div></div>
+            </div>
+            <div class="subsec"><div class="subsec-title">Jira feature ticket</div>
+              <div class="field-grid">
+                <div class="field"><label>Jira Ticket ID <span class="req">*</span></label><input class="finput" type="text" placeholder="MDOI-1234" id="f_jira_id"></div>
+                <div class="field"><label>Jira Ticket Link</label><input class="finput" type="url" placeholder="https://jira.telefonica.de/browse/…" id="f_jira_url"></div>
+                <div class="field span2"><label>Ticket contains functional BPMN description?</label><div class="radio-group"><label><input type="radio" name="r_jira_desc" value="Yes"> Yes</label><label><input type="radio" name="r_jira_desc" value="No"> No</label></div></div>
+              </div>
+            </div>
+            <div class="form-nav"><button class="btn primary" onclick="goSec(1)">Next: Testing &amp; Docs →</button></div>
+          </div>
+        </div>
+
+        <!-- Section 1: Testing & Documentation -->
+        <div id="sec1" class="panel">
+          <div class="card">
+            <div class="card-head"><div class="sec-badge">Section 2 of 7</div><h2>Testing &amp; Documentation</h2><p>Functional test evidence and Confluence documentation</p></div>
+            <div class="subsec-title">Functional test evidence</div>
+            <div class="field-grid">
+              <div class="field span2"><label>Test documentation attached in Jira? <span class="req">*</span></label><div class="radio-group"><label><input type="radio" name="r_testdoc" value="Yes"> Yes</label><label><input type="radio" name="r_testdoc" value="No"> No</label></div></div>
+              <div class="field span2"><label>Summary of test coverage <span class="req">*</span></label><textarea class="finput" placeholder="Describe test cases, scenarios, edge cases…" id="f_test_summary"></textarea></div>
+              <div class="field"><label>Tested in UAT environment? <span class="req">*</span></label><div class="radio-group"><label><input type="radio" name="r_uat" value="Yes"> Yes</label><label><input type="radio" name="r_uat" value="No"> No</label></div></div>
+              <div class="field span2"><label>Expected performance on UAT &amp; Prod</label><textarea class="finput" placeholder="~500 instances/day, avg 2 min per instance…" id="f_perf"></textarea></div>
+            </div>
+            <div class="subsec"><div class="subsec-title">Confluence documentation</div>
+              <div class="field-grid">
+                <div class="field span2"><label>Confluence Page Link <span class="req">*</span></label><input class="finput" type="url" placeholder="https://confluence.telefonica.de/x/…" id="f_conf_url"></div>
+                <div class="field span2"><label>Documentation includes (select all):</label><div class="check-grid"><label><input type="checkbox" id="c_arch"><span>Architecture diagrams</span></label><label><input type="checkbox" id="c_flow"><span>BPMN flow explanation</span></label><label><input type="checkbox" id="c_trig"><span>Trigger description</span></label><label><input type="checkbox" id="c_io"><span>Input / output definition</span></label><label><input type="checkbox" id="c_err"><span>Error handling</span></label></div></div>
+                <div class="field"><label>Documentation complete?</label><div class="radio-group"><label><input type="radio" name="r_doccomp" value="Yes"> Yes</label><label><input type="radio" name="r_doccomp" value="No"> No</label></div></div>
+              </div>
+            </div>
+            <div class="form-nav"><button class="btn primary" onclick="goSec(2)">Next: Ownership →</button><button class="btn" onclick="goSec(0)">← Back</button></div>
+          </div>
+        </div>
+
+        <!-- Section 2: Ownership & Roles -->
+        <div id="sec2" class="panel">
+          <div class="card">
+            <div class="card-head"><div class="sec-badge">Section 3 of 7</div><h2>Ownership &amp; Roles</h2><p>Responsible stakeholders for this deployment</p></div>
+            <div class="subsec-title">Stakeholder identification</div>
+            <table class="dt" style="margin-bottom:14px">
+              <thead><tr><th style="width:30%">Role</th><th style="width:35%">Name</th><th>Notes</th></tr></thead>
+              <tbody>
+                <tr><td class="rl">Requirement Owner</td><td><input placeholder="Full name…" id="t_req_owner"></td><td><input placeholder="Notes…" id="t_req_notes"></td></tr>
+                <tr><td class="rl">BPMN Developer</td><td><input placeholder="Full name…" id="t_bpmn_dev"></td><td><input placeholder="Notes…" id="t_bpmn_notes"></td></tr>
+                <tr><td class="rl">Business / Use Case Owner</td><td><input placeholder="Full name…" id="t_biz_owner"></td><td><input placeholder="Notes…" id="t_biz_notes"></td></tr>
+              </tbody>
+            </table>
+            <div class="form-nav"><button class="btn primary" onclick="goSec(3)">Next: BPMN Overview →</button><button class="btn" onclick="goSec(1)">← Back</button></div>
+          </div>
+        </div>
+
+        <!-- Section 3: BPMN Overview -->
+        <div id="sec3" class="panel">
+          <div class="card">
+            <div class="card-head"><div class="sec-badge">Section 4 of 7</div><h2>BPMN Functional Overview</h2><p>Workflow purpose, trigger type, and BPMN dependencies</p></div>
+            <div class="field-grid">
+              <div class="field span2"><label>BPMN workflow description <span class="req">*</span></label><textarea class="finput" style="min-height:80px" placeholder="Describe what this BPMN does, the business problem, and expected outcome…" id="f_bpmn_desc"></textarea></div>
+              <div class="field"><label>Max instances (to avoid overloading Prod)</label><input class="finput" type="number" placeholder="e.g. 1000" id="f_max_inst"></div>
+              <div class="field"><label>String variables &lt; 4000 chars?</label><div class="radio-group"><label><input type="radio" name="r_str4k" value="Yes"> Yes</label><label><input type="radio" name="r_str4k" value="No"> No</label></div></div>
+              <div class="field span2"><label>Using Camunda timer events instead of sleep()?</label><div class="radio-group"><label><input type="radio" name="r_timer" value="Yes"> Yes</label><label><input type="radio" name="r_timer" value="No"> No</label></div></div>
+            </div>
+            <div class="subsec"><div class="subsec-title">Trigger mechanism</div>
+              <div class="field-grid">
+                <div class="field span2"><label>How is the BPMN triggered? (select all)</label><div class="check-grid"><label><input type="checkbox" id="trig_timer"><span>Timer</span></label><label><input type="checkbox" id="trig_manual"><span>Manual</span></label><label><input type="checkbox" id="trig_api"><span>Remote API</span></label><label><input type="checkbox" id="trig_gui"><span>GUI</span></label><label><input type="checkbox" id="trig_msg"><span>Message / Event</span></label><label><input type="checkbox" id="trig_signal"><span>Signal / Event subprocess</span></label><label><input type="checkbox" id="trig_other"><span>Other</span></label></div></div>
+                <div class="field span2"><label>Trigger explanation</label><textarea class="finput" placeholder="Describe how and when this BPMN is triggered…" id="f_trig_exp"></textarea></div>
+              </div>
+            </div>
+            <div class="form-nav"><button class="btn primary" onclick="goSec(4)">Next: System Dependencies →</button><button class="btn" onclick="goSec(2)">← Back</button></div>
+          </div>
+        </div>
+
+        <!-- Section 4: System Dependencies -->
+        <div id="sec4" class="panel">
+          <div class="card">
+            <div class="card-head"><div class="sec-badge">Section 5 of 7</div><h2>System &amp; Platform Dependencies</h2><p>All external systems this BPMN interacts with</p></div>
+            <div class="subsec-title">External system interactions</div>
+            <table class="dt" style="margin-bottom:14px">
+              <thead><tr><th>Platform</th><th>Read / Write</th><th>Purpose</th><th>Interface</th></tr></thead>
+              <tbody>
+                <tr><td><input placeholder="e.g. SAP ERP" id="sys1_name"></td><td><input placeholder="R/W" id="sys1_rw"></td><td><input placeholder="Purpose…" id="sys1_purpose"></td><td><input placeholder="REST / SOAP…" id="sys1_iface"></td></tr>
+                <tr><td><input placeholder="e.g. Kafka" id="sys2_name"></td><td><input placeholder="R/W" id="sys2_rw"></td><td><input placeholder="Purpose…" id="sys2_purpose"></td><td><input placeholder="Topic / endpoint…" id="sys2_iface"></td></tr>
+                <tr><td><input placeholder="e.g. PostgreSQL" id="sys3_name"></td><td><input placeholder="R/W" id="sys3_rw"></td><td><input placeholder="Purpose…" id="sys3_purpose"></td><td><input placeholder="JDBC / REST…" id="sys3_iface"></td></tr>
+              </tbody>
+            </table>
+            <div class="field-grid">
+              <div class="field"><label>Depends on external system availability?</label><div class="radio-group"><label><input type="radio" name="r_ext" value="Yes"> Yes</label><label><input type="radio" name="r_ext" value="No"> No</label></div></div>
+              <div class="field span2"><label>Fallback / error handling approach</label><textarea class="finput" placeholder="e.g. Retry 3 times with 5 min intervals, then alert operations team…" id="f_fallback"></textarea></div>
+            </div>
+            <div class="form-nav"><button class="btn primary" onclick="goSec(5)">Next: Deployment Gov. →</button><button class="btn" onclick="goSec(3)">← Back</button></div>
+          </div>
+        </div>
+
+        <!-- Section 5: Deployment Governance -->
+        <div id="sec5" class="panel">
+          <div class="card">
+            <div class="card-head"><div class="sec-badge">Section 6 of 7</div><h2>Deployment Governance</h2><p>TSM change ticket and rollback planning</p></div>
+            <div class="field-grid">
+              <div class="field"><label>TSM Change Ticket ID <span class="req">*</span></label><input class="finput" type="text" placeholder="CHG-XXXXXXXX" id="f_tsm_id"></div>
+              <div class="field"><label>Planned PROD deployment window <span class="req">*</span></label><input class="finput" type="datetime-local" id="f_deploy_win"></div>
+              <div class="field span2"><label>Rollback plan documented? <span class="req">*</span></label><div class="radio-group"><label><input type="radio" name="r_rollback" value="Yes"> Yes</label><label><input type="radio" name="r_rollback" value="No"> No</label></div></div>
+            </div>
+            <div class="form-nav"><button class="btn primary" onclick="goSec(6)">Next: Declaration →</button><button class="btn" onclick="goSec(4)">← Back</button></div>
+          </div>
+        </div>
+
+        <!-- Section 6: Final Declaration -->
+        <div id="sec6" class="panel">
+          <div class="card">
+            <div class="card-head"><div class="sec-badge">Section 7 of 7</div><h2>Final Confirmation &amp; Declaration</h2><p>Sign off before generating the approval document</p></div>
+            <div class="info-banner"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>By submitting you confirm all sections are complete, all artifacts are attached to Jira, all testing is done, and documentation is up to date.</div>
+            <div class="field-grid">
+              <div class="field"><label>Developer Name <span class="req">*</span></label><input class="finput" type="text" placeholder="Your full name" id="f_dev_name"></div>
+              <div class="field"><label>Date <span class="req">*</span></label><input class="finput" type="date" id="f_dev_date"></div>
+            </div>
+            <div class="subsec"><div class="subsec-title">AE Team — UAT demo members</div>
+              <table class="dt" style="margin-bottom:14px">
+                <thead><tr><th>#</th><th>Role</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td class="rl">1</td><td>Application Owner (2×)</td><td><span style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--color-background-warning);color:var(--color-text-warning)">Pending approval</span></td></tr>
+                  <tr><td class="rl">2</td><td>AE Manager</td><td><span style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--color-background-warning);color:var(--color-text-warning)">Pending approval</span></td></tr>
+                  <tr><td class="rl">3</td><td>AE Operations Manager</td><td><span style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--color-background-warning);color:var(--color-text-warning)">Pending approval</span></td></tr>
+                  <tr><td class="rl">4</td><td>AE Service Manager</td><td><span style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--color-background-warning);color:var(--color-text-warning)">Pending approval</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="form-nav">
+              <button class="btn success" onclick="genPreview()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+                Preview &amp; Download PDF →
+              </button>
+              <button class="btn" onclick="goSec(5)">← Back</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /mp0 -->
+
+      <!-- PREVIEW + DOWNLOAD PANEL (mp1) -->
+      <div class="panel" id="mp1">
+        <div class="pdf-wrap">
+          <div class="pdf-doc">
+            <div class="pdf-hdr">
+              <div><div class="pdf-org">Telefónica Germany — MDOI Operations</div><div class="pdf-sub">AE Team · Power Platform Services</div></div>
+              <div class="pdf-ts"><div id="pv_date" style="font-weight:500"></div><div id="pv_time"></div></div>
+            </div>
+            <div class="pdf-title">Phase 1 Approval Pre-requisites<br>Prod MDOI Deployment — Major Updates</div>
+            <div class="pdf-sec"><div class="pdf-sec-hdr">1 · Repository &amp; Tracking</div><div class="pdf-row"><span class="pdf-k">Repository URL</span><span class="pdf-v" id="pv_repo">—</span></div><div class="pdf-row"><span class="pdf-k">BPMN File</span><span class="pdf-v" id="pv_bpmn">—</span></div><div class="pdf-row"><span class="pdf-k">Jira Ticket ID</span><span class="pdf-v" id="pv_jira">—</span></div><div class="pdf-row"><span class="pdf-k">Version Tagging</span><span class="pdf-v" id="pv_ver">—</span></div></div>
+            <div class="pdf-sec"><div class="pdf-sec-hdr">2 · Testing &amp; Documentation</div><div class="pdf-row"><span class="pdf-k">UAT Tested</span><span class="pdf-v" id="pv_uat">—</span></div><div class="pdf-row"><span class="pdf-k">Test Doc in Jira</span><span class="pdf-v" id="pv_testdoc">—</span></div><div class="pdf-row"><span class="pdf-k">Confluence Page</span><span class="pdf-v" id="pv_conf">—</span></div><div class="pdf-row"><span class="pdf-k">Docs Complete</span><span class="pdf-v" id="pv_doccomp">—</span></div></div>
+            <div class="pdf-sec"><div class="pdf-sec-hdr">3 · Ownership &amp; Roles</div><div class="pdf-row"><span class="pdf-k">Requirement Owner</span><span class="pdf-v" id="pv_req_owner">—</span></div><div class="pdf-row"><span class="pdf-k">BPMN Developer</span><span class="pdf-v" id="pv_bpmn_dev">—</span></div><div class="pdf-row"><span class="pdf-k">Business Owner</span><span class="pdf-v" id="pv_biz_owner">—</span></div></div>
+            <div class="pdf-sec"><div class="pdf-sec-hdr">4 · BPMN Overview</div><div class="pdf-row"><span class="pdf-k">Trigger</span><span class="pdf-v" id="pv_trig">—</span></div><div class="pdf-row"><span class="pdf-k">Max Instances</span><span class="pdf-v" id="pv_maxinst">—</span></div><div class="pdf-row"><span class="pdf-k">Camunda Timers</span><span class="pdf-v" id="pv_timer">—</span></div></div>
+            <div class="pdf-sec"><div class="pdf-sec-hdr">6 · Deployment Governance</div><div class="pdf-row"><span class="pdf-k">TSM Ticket</span><span class="pdf-v" id="pv_tsm">—</span></div><div class="pdf-row"><span class="pdf-k">Deployment Window</span><span class="pdf-v" id="pv_depwin">—</span></div><div class="pdf-row"><span class="pdf-k">Rollback Plan</span><span class="pdf-v" id="pv_rollback">—</span></div></div>
+            <div class="pdf-sec"><div class="pdf-sec-hdr">7 · Developer Declaration</div><div class="pdf-row"><span class="pdf-k">Developer Name</span><span class="pdf-v" id="pv_devname">—</span></div><div class="pdf-row"><span class="pdf-k">Declaration Date</span><span class="pdf-v" id="pv_devdate">—</span></div></div>
+            <div class="pdf-footer">Auto-generated via MDOI Phase 1 Approval App · Telefónica Germany · Power Platform Services</div>
+          </div>
+          <div class="actions-card">
+            <div class="act-title">Document ready</div>
+            <div class="act-sub">Your Phase 1 Approval form has been compiled. Download the PDF or trigger the Power Automate approval flow to notify the AE Team.</div>
+            <div class="dl-box">
+              <div class="dl-box-title">Download PDF</div>
+              <div class="dl-box-sub">Saves directly to your Downloads folder.</div>
+              <button class="btn success" style="width:100%" onclick="dlPDF()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Download PDF
+              </button>
+            </div>
+            <div class="dl-box">
+              <div class="dl-box-title">Send for approval</div>
+              <div class="dl-box-sub">Triggers Power Automate — notifies AE Team via Teams &amp; email.</div>
+              <button class="btn primary" style="width:100%;margin-bottom:6px" onclick="triggerApproval()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+                Send to AE Team
+              </button>
+              <div id="appr-status"></div>
+            </div>
+            <button class="btn" style="width:100%;margin-top:4px" onclick="backToForm()">← Edit Form</button>
+          </div>
+        </div>
+      </div><!-- /mp1 -->
+
+    </main>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+var secS=0, secDone=[false,false,false,false,false,false,false];
+
+function showPanel(id){
+  ['mp0','mp1'].forEach(function(p){
+    document.getElementById(p).className='panel'+(p===id?' active':'');
+  });
+}
+
+function goSec(n){
+  secDone[secS]=true; secS=n;
+  for(var i=0;i<7;i++){
+    document.getElementById('sec'+i).className='panel'+(i===n?' active':'');
+    var sl=document.getElementById('sl'+i);
+    if(sl) sl.className='sitem'+(i===n?' active':secDone[i]?' done':'');
+  }
+  var done=secDone.filter(Boolean).length;
+  document.getElementById('prog-label').textContent=done+' of 7 sections';
+  document.getElementById('prog-fill').style.width=Math.round(done/7*100)+'%';
+  // Always show form panel
+  showPanel('mp0');
+}
+
+function backToForm(){
+  showPanel('mp0');
+  // Re-activate section 6 in the sidebar
+  for(var i=0;i<7;i++){
+    var sl=document.getElementById('sl'+i);
+    if(sl) sl.className='sitem'+(i===6?' active':secDone[i]?' done':'');
+  }
+  secS=6;
+  for(var i=0;i<7;i++) document.getElementById('sec'+i).className='panel'+(i===6?' active':'');
+}
+
+function gv(id){var el=document.getElementById(id);return el&&el.value?el.value:'—';}
+function gr(name){var els=document.querySelectorAll('input[name="'+name+'"]');for(var i=0;i<els.length;i++){if(els[i].checked)return els[i].value;}return'—';}
+
+function genPreview(){
+  // Mark all sections done
+  secDone=[true,true,true,true,true,true,true];
+  var done=secDone.filter(Boolean).length;
+  document.getElementById('prog-label').textContent=done+' of 7 sections';
+  document.getElementById('prog-fill').style.width='100%';
+  for(var i=0;i<7;i++){var sl=document.getElementById('sl'+i);if(sl)sl.className='sitem done';}
+
+  var d=new Date();
+  document.getElementById('pv_date').textContent=d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  document.getElementById('pv_time').textContent=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('pv_repo').textContent=gv('f_repo_url');
+  document.getElementById('pv_bpmn').textContent=gv('f_bpmn_name');
+  document.getElementById('pv_jira').textContent=gv('f_jira_id');
+  document.getElementById('pv_ver').textContent=gr('r_ver');
+  document.getElementById('pv_uat').textContent=gr('r_uat');
+  document.getElementById('pv_testdoc').textContent=gr('r_testdoc');
+  document.getElementById('pv_conf').textContent=gv('f_conf_url');
+  document.getElementById('pv_doccomp').textContent=gr('r_doccomp');
+  document.getElementById('pv_req_owner').textContent=gv('t_req_owner');
+  document.getElementById('pv_bpmn_dev').textContent=gv('t_bpmn_dev');
+  document.getElementById('pv_biz_owner').textContent=gv('t_biz_owner');
+  var trigs=['timer','manual','api','gui','msg','signal','other'].filter(function(t){var el=document.getElementById('trig_'+t);return el&&el.checked;});
+  document.getElementById('pv_trig').textContent=trigs.length?trigs.join(', '):'—';
+  document.getElementById('pv_maxinst').textContent=gv('f_max_inst');
+  document.getElementById('pv_timer').textContent=gr('r_timer');
+  document.getElementById('pv_tsm').textContent=gv('f_tsm_id');
+  document.getElementById('pv_depwin').textContent=gv('f_deploy_win');
+  document.getElementById('pv_rollback').textContent=gr('r_rollback');
+  document.getElementById('pv_devname').textContent=gv('f_dev_name');
+  document.getElementById('pv_devdate').textContent=gv('f_dev_date');
+  showPanel('mp1');
+}
+
+function dlPDF(){
+  try{
+    var jsPDF=window.jspdf.jsPDF;
+    var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    var W=210,mg=18,y=20,lh=6;
+    function tx(t,x,iy,sz,b,c){doc.setFontSize(sz||10);doc.setFont('helvetica',b?'bold':'normal');c?doc.setTextColor(c[0],c[1],c[2]):doc.setTextColor(40,49,64);doc.text(String(t||''),x,iy);}
+    function ln(iy){doc.setDrawColor(226,232,240);doc.setLineWidth(0.3);doc.line(mg,iy,W-mg,iy);}
+    function sec(title,iy){doc.setFillColor(230,241,251);doc.rect(mg,iy-4,W-mg*2,7,'F');tx(title,mg+3,iy,8.5,true,[0,120,212]);return iy+8;}
+    function row(k,v,iy){tx(k+':',mg,iy,9,false,[100,116,139]);tx(v||'—',mg+52,iy,9,false,[30,41,59]);ln(iy+2);return iy+lh;}
+    doc.setFillColor(0,120,212);doc.rect(0,0,W,22,'F');
+    tx('Telefónica Germany — MDOI Operations',mg,10,11,true,[255,255,255]);
+    tx('AE Team · Power Platform Services',mg,16,8,false,[180,210,255]);
+    doc.setFontSize(7.5);doc.setTextColor(180,210,255);doc.text('Generated: '+new Date().toLocaleString('en-GB'),W-mg,10,{align:'right'});
+    y=32;tx('Phase 1 Approval Pre-requisites — Prod MDOI Deployment (Major Updates)',mg,y,13,true,[30,41,59]);y+=4;ln(y);y+=7;
+    y=sec('1 · Repository & Tracking',y);y=row('Repository URL',gv('f_repo_url'),y);y=row('BPMN File Name',gv('f_bpmn_name'),y);y=row('Jira Ticket ID',gv('f_jira_id'),y);y=row('Version Tagging',gr('r_ver'),y);y+=3;
+    y=sec('2 · Testing & Documentation',y);y=row('UAT Tested',gr('r_uat'),y);y=row('Test Doc in Jira',gr('r_testdoc'),y);y=row('Confluence Page',gv('f_conf_url'),y);y=row('Docs Complete',gr('r_doccomp'),y);y+=3;
+    y=sec('3 · Ownership & Roles',y);y=row('Requirement Owner',gv('t_req_owner'),y);y=row('BPMN Developer',gv('t_bpmn_dev'),y);y=row('Business Owner',gv('t_biz_owner'),y);y+=3;
+    var trigs=['timer','manual','api','gui','msg','signal','other'].filter(function(t){var el=document.getElementById('trig_'+t);return el&&el.checked;});
+    y=sec('4 · BPMN Functional Overview',y);y=row('Trigger',trigs.length?trigs.join(', '):'—',y);y=row('Max Instances',gv('f_max_inst'),y);y=row('Camunda Timers',gr('r_timer'),y);y+=3;
+    if(y>240){doc.addPage();y=20;}
+    y=sec('5 · System Dependencies',y);y=row('External System 1',gv('sys1_name'),y);y=row('External System 2',gv('sys2_name'),y);y=row('Ext. System Dependency',gr('r_ext'),y);y+=3;
+    y=sec('6 · Deployment Governance',y);y=row('TSM Change Ticket',gv('f_tsm_id'),y);y=row('Deployment Window',gv('f_deploy_win'),y);y=row('Rollback Plan',gr('r_rollback'),y);y+=3;
+    y=sec('7 · Developer Declaration',y);y=row('Developer Name',gv('f_dev_name'),y);y=row('Declaration Date',gv('f_dev_date'),y);
+    doc.setFillColor(248,250,252);doc.rect(0,282,W,15,'F');doc.setDrawColor(226,232,240);doc.setLineWidth(0.4);doc.line(0,282,W,282);
+    doc.setFontSize(7);doc.setTextColor(148,163,184);doc.text('MDOI Phase 1 Approval — Telefónica Germany · Power Platform Services',W/2,289,{align:'center'});
+    var jiraId=gv('f_jira_id').replace(/[^a-zA-Z0-9\-_]/g,'')||'MDOI';
+    doc.save('Phase1_Approval_'+jiraId+'_'+new Date().toISOString().slice(0,10)+'.pdf');
+  }catch(e){alert('PDF error: '+e.message);}
+}
+
+function triggerApproval(){
+  var s=document.getElementById('appr-status');s.innerHTML='';
+  var labels=['Application Owner — notified via Teams','AE Manager — notified via Teams','AE Ops Manager — notified via email'];
+  labels.forEach(function(lbl,i){
+    setTimeout(function(){
+      var row=document.createElement('div');row.className='appr-row';
+      row.innerHTML='<span class="appr-dot dot-pending"></span><span>'+lbl+'</span>';
+      s.appendChild(row);
+    },i*600);
+  });
+}
+</script>
